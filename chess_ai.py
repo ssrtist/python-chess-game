@@ -3,7 +3,7 @@ import math
 import random
 
 class ChessAI:
-    def __init__(self, depth: int = 99):
+    def __init__(self, depth: int = 9999):
         self.depth = depth
 
     # Piece values for evaluation function

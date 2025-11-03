@@ -352,14 +352,26 @@ class BoardState:
         return new_board
 
     def has_any_legal_moves(self, color: PieceColor) -> bool:
+        total_moves = 0
         for piece in self.pieces:
             if piece.color == color:
-                if self.calculate_possible_moves(piece): # If any legal moves exist for this piece
+                moves = self.calculate_possible_moves(piece)
+                total_moves += len(moves)
+                if moves:  # If any legal moves exist for this piece
                     return True
+        print(f"Total legal moves for {color}: {total_moves}")  # Debug output
         return False
 
     def is_checkmate(self, color: PieceColor) -> bool:
         return self.is_king_in_check(color) and not self.has_any_legal_moves(color)
 
     def is_stalemate(self, color: PieceColor) -> bool:
-        return not self.is_king_in_check(color) and not self.has_any_legal_moves(color)
+        # Safety check - at least one piece of each color must exist
+        has_white_pieces = any(p.color == PieceColor.WHITE for p in self.pieces)
+        has_black_pieces = any(p.color == PieceColor.BLACK for p in self.pieces)
+        if not (has_white_pieces and has_black_pieces):
+            return False
+
+        no_check = not self.is_king_in_check(color)
+        no_moves = not self.has_any_legal_moves(color)
+        return no_check and no_moves
